@@ -16,9 +16,9 @@ void take_input(int A[], register int e, register int n_oversized)
 	for(i=0;i<e;++i)
 	{
 		scanf("%d %d %d", &x, &y, &w);
-		--x;
-		--y;
-		A[x*n_oversized + y] = w;
+		int t = (x-1)*n_oversized + y-1;
+		if(A[t] == 0 || w < A[t])
+			A[t] = w;
 		// A[y*n_oversized + x] = w;
 	}
 
@@ -119,7 +119,7 @@ void fw_block(int* output, int n, int b)
 void print_matrix(int mat[], int n_oversized, int n)
 {
 	FILE *fptr;
-	fptr = fopen("./sample/Q2_test/t43", "w");
+	fptr = fopen("./sample/Q2_test/t91", "w");
 	register int i;
 	register int j;
 
@@ -138,7 +138,7 @@ void print_matrix(int mat[], int n_oversized, int n)
 int main()
 {
 	FILE *fptr;
-	fptr = fopen("./sample/Q2/t43", "r");
+	fptr = fopen("./sample/Q2/t91", "r");
 	int v,e;
 	fscanf(fptr,"%d %d", &v, &e);
 
@@ -162,35 +162,13 @@ int main()
 	for(i=0;i<e;++i)
 	{
 		fscanf(fptr,"%d %d %d", &x, &y, &w);
-		--x;
-		--y;
-		matrix[x*n_oversized + y] = w;
-		// A[y*n_oversized + x] = w;
+		int t = (x-1)*n_oversized + y-1;
+		if(matrix[t] == 0 || w < matrix[t])
+			matrix[t] = w;
 	}
 	fclose(fptr);
 
-
-	// print_matrix(matrix,n_oversized,v);
-	// printf("\n");
-
-	
-	// int * output = nullptr;
-
 	fw_init(matrix,n_oversized);
-	// print_matrix(matrix,n_oversized,v);
-	// printf("\n");
-
-
-
-	// int n_blocked = v;
-	// int block_remainder = v%BS;
-
-	// if(block_remainder != 0)
-	// {
-	// 	n_blocked = v + block_size - block_remainder;
-	// }
-
-	// output = new int[n_blocked * n_blocked];
 
 	fw_block(matrix, n_oversized, BS);
 
