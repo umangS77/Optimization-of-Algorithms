@@ -39,7 +39,7 @@ int take_input(Matrix * restrict arr[])
 		{
 			for(k=0;k<y;++k)
 			{
-				fscanf(fptr,"%ld",&mat->matrix[j][k]);
+				fscanf(fptr,"%d",&mat->matrix[j][k]);
 			}
 		}
 		arr[i] = mat;
@@ -64,7 +64,7 @@ void print_matrix(Matrix * restrict result)
 	{
 		for(j=0;j<result->m;++j)
 		{
-			fprintf(fptr,"%ld ", result->matrix[i][j]);
+			fprintf(fptr,"%d ", result->matrix[i][j]);
 		}
 		fprintf(fptr,"\n");
 	}
