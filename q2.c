@@ -1,177 +1,187 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #include <time.h>
+#include <time.h>
 
-#define INF -1
-#define BS 16 // block_size
+#define INF 1000000000
+#define BS 8 // block_size
 
-void take_input(int A[], register int e, register int n_oversized)
+void take_input(int ** restrict matrix, register int e, register int v)
 {
-
-	register int i;
 	int x;
 	int y;
 	int w;
-
-	for(i=0;i<e;++i)
+	
+	for(register int i=0;i<e;++i)
 	{
 		scanf("%d %d %d", &x, &y, &w);
-		int t = (x-1)*n_oversized + y-1;
-		if(A[t] == 0 || w < A[t])
-			A[t] = w;
-		// A[y*n_oversized + x] = w;
-	}
-
-}
-
-
-void fw_solve(int C[], int A[], int B[], int b, int n)
-{
-    for (int k = 0; k < b; ++k)
-    {
-        for (int i = 0; i < b; ++i)
-        {
-        	if(A[i*n + k] != INF)
-        	{
-	        	for(int j = 0; j < b; ++j)
-	        	{
-	        		if(B[k*n + j] != INF)
-	        		{
-			        	int temp = A[i*n + k] + B[k*n + j];
-			            if (C[i*n + j] == INF || C[i*n + j] > temp)
-			            {
-					        C[i*n + j] = temp;
-			            }
-			        }
-		        }
-		    }
-        }
-    }
-}
-
-
-void fw_init(int input[], int n_oversized)
-{
-	for(int i=0;i<n_oversized;++i)
-	{
-		for(int j=0;j<n_oversized;++j)
-		{
-			if(i==j)
-			{
-				input[i*n_oversized + j] = 0;
-			}
-			else if(input[i*n_oversized + j] == 0)
-			{
-				input[i*n_oversized + j] = INF;
-			}
-
-		}
-	}
-	// return output;
-}
-
-void fw_block(int* output, int n, int b)
-{
-	int blocks = n/b;
-	// printf("block = %d\n",blocks);
-
-	for(int k=0;k<blocks;++k)
-	{
-		fw_solve(&output[k*b*n + k*b], &output[k*b*n + k*b], &output[k*b*n + k*b], b, n);
-	
-		for(int j=0;j<blocks;++j)
-		{
-			if(j==k)
-			{
-				continue;
-			}
-
-			fw_solve(&output[k*b*n + j*b], &output[k*b*n + k*b], &output[k*b*n + j*b], b, n);
-		}
-
-		for(int i=0;i<blocks;++i)
-		{
-			if(i==k)
-			{
-				continue;
-			}
-			
-			fw_solve(&output[i*b*n + k*b], &output[i*b*n + k*b], &output[k*b*n + k*b], b, n);
-			
-			for(int j=0;j<blocks;++j)
-			{
-				if(j==k)
-				{
-					continue;
-				}
-
-				fw_solve(&output[i*b*n + j*b], &output[i*b*n + k*b], &output[k*b*n + j*b], b, n);
-
-			}
-
-		}
+		--x;
+		--y;
+		if(w < matrix[x][y])
+			matrix[x][y] = w;
 
 	}
-
 }
 
-
-void print_matrix(int mat[], int n_oversized, int n)
+void print_matrix(int **  mat, int v, int e)
 {
-	FILE *fptr;
-	fptr = fopen("./sample/Q2_test/t91", "w");
+	// FILE *fptr;
+	// fptr = fopen("./sample/Q2_test/t29", "w");
 	register int i;
 	register int j;
-
-	for(i=0;i<n;++i)
+	for(i=0;i<v;++i)
 	{
-		for(j=0;j<n;++j)
+		for(j=0;j<v;++j)
 		{
-			fprintf(fptr,"%d ", mat[i*n_oversized+j]);
+			if(mat[i][j] < INF)
+			{
+				// fprintf(fptr,"%d ", mat[i][j]);
+				printf("%d ",mat[i][j]);
+			}
+			else
+			{
+				// fprintf(fptr,"%d ", -1);
+				printf("%d ", -1);
+			}
+
+
 		}
-		fprintf(fptr,"\n");
+		// fprintf(fptr,"\n");
+		printf("\n");
 	}
-	fclose(fptr);
+	// fclose(fptr);
 }
 
+int ** fw_block(int ** restrict matrix,register int n)
+{
+	for (register int k = 0; k < n; ++k) 
+	{
+		int * restrict C = *(matrix + k);
+		for (register int i = 0; i < n; ++i) 
+		{
+			int * restrict B = *(matrix + i);
+			if (*(B + k) != INF)
+			{
+				register int j;
+				for (j=0;j<n-BS;j+=BS) 
+				{
+					register int val = *(B + k) + *(C + j);     
+					if (val < *(B + j)) 
+					{
+						*(B + j) = val;
+					}
+
+					val = *(B + k) + *(C + j + 1);     
+					if (val < *(B + j + 1)) 
+					{
+						*(B + j + 1) = val;
+					}
+
+					val = *(B + k) + *(C + j + 2);     
+					if (val < *(B + j + 2)) 
+					{
+						*(B + j + 2) = val;
+					}
+
+					val = *(B + k) + *(C + j + 3);     
+					if (val < *(B + j + 3)) 
+					{
+						*(B + j + 3) = val;
+					}
+
+					val = *(B + k) + *(C + j + 4);     
+					if (val < *(B + j + 4)) 
+					{
+						*(B + j + 4) = val;
+					}
+
+					val = *(B + k) + *(C + j + 5);     
+					if (val < *(B + j + 5)) 
+					{
+						*(B + j + 5) = val;
+					}
+
+					val = *(B + k) + *(C + j + 6);     
+					if (val < *(B + j + 6)) 
+					{
+						*(B + j + 6) = val;
+					}
+
+					val = *(B + k) + *(C + j + 7);     
+					if (val < *(B + j + 7)) 
+					{
+						*(B + j + 7) = val;
+					}
+				}
+				for(;j<n;++j) 
+				{
+						register int val = *(B + k) + *(C + j);     
+						if (*(B + j) == INF || val < *(B + j)) 
+						{
+							*(B + j) = val;
+						}
+				}
+			}
+		}
+	}
+
+	return matrix;
+}
 
 int main()
 {
-	FILE *fptr;
-	fptr = fopen("./sample/Q2/t91", "r");
+
+	// clock_t start, end;
+ //    double cpu_time_used;
+ //    start = clock();
+
+	// FILE *fptr;
+	// fptr = fopen("./sample/Q2/t29", "r");
 	int v,e;
-	fscanf(fptr,"%d %d", &v, &e);
-
-
-	int n_oversized = v;
-	int block_remainder = v % BS;
-	if(block_remainder != 0)
+	// fscanf(fptr,"%d %d", &v, &e);
+	scanf("%d %d",&v,&e);
+	int ** restrict matrix = (int **)malloc(v * sizeof(int *));
+	int ** restrict output;
+	for(int i=0;i<v;i++)
 	{
-		n_oversized = v + BS - block_remainder;
+		matrix[i] = (int*)malloc(v * sizeof(int)); 
 	}
 
-	int * restrict matrix = malloc(sizeof(int) * n_oversized * n_oversized);
+	for(int i=0;i<v;++i)
+	{
+		for(int j=0;j<v;++j)
+		{
+			matrix[i][j] = INF;
+		}
+		matrix[i][i] = 0;
+	}
+
+	// int x;
+	// int y;
+	// int w;
 	
-	// take_input(matrix,e,n_oversized);
+	// for(register int i=0;i<e;++i)
+	// {
+	// 	fscanf(fptr,"%d %d %d", &x, &y, &w);
+	// 	--x;
+	// 	--y;
+	// 	if(w < matrix[x][y])
+	// 		matrix[x][y] = w;
 
-	register int i;
-	int x;
-	int y;
-	int w;
+	// }
+	// fclose(fptr);
 
-	for(i=0;i<e;++i)
-	{
-		fscanf(fptr,"%d %d %d", &x, &y, &w);
-		int t = (x-1)*n_oversized + y-1;
-		if(matrix[t] == 0 || w < matrix[t])
-			matrix[t] = w;
-	}
-	fclose(fptr);
+	take_input(matrix,e,v);
 
-	fw_init(matrix,n_oversized);
+	output = fw_block(matrix,v);
 
-	fw_block(matrix, n_oversized, BS);
+	print_matrix(output,v,e);
 
-	print_matrix(matrix,n_oversized,v);
+	// end = clock();
+ //    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+	// printf("Time taken: %lf\n", cpu_time_used);
+
+	return 0;
 
 }
+
