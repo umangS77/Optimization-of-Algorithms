@@ -3,8 +3,6 @@
 
 # Soware Programming for Performance
 
-# Assignment 1 Report
-
 ## Task 1 : Matrix Chain Multiplication
 
 ##### Problem Statement: Given a sequence of n matrices,find an efficient way to multiply these matrices together.
